@@ -1,0 +1,29 @@
+Waiting for the download to complete(calculating pi)...
+Task completed : 10
+Task completed : 9
+Task completed : 8
+Task completed : 7
+Task completed : 6
+Task completed : 5
+Task completed : 4
+Task completed : 3
+Task completed : 2
+Task completed : 1
+----------------------------------------------------------------------------------------------------
+All Task completed, Waking up displayer
+----------------------------------------------------------------------------------------------------
+Task :10, Bytes Downloaded: 48823
+Task :9, Bytes Downloaded: 48823
+Task :8, Bytes Downloaded: 48823
+Task :7, Bytes Downloaded: 48823
+Task :6, Bytes Downloaded: 48823
+Task :5, Bytes Downloaded: 48823
+Task :4, Bytes Downloaded: 48823
+Task :3, Bytes Downloaded: 48823
+Task :2, Bytes Downloaded: 48823
+Task :1, Bytes Downloaded: 48823
+----------------------------------------------------------------------------------------------------
+The value of PI is :3.14158265359
+----------------------------------------------------------------------------------------------------
+Data is the *Same* for each download
+Total time taken:33.1499998569s
