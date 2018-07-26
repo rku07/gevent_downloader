@@ -24,6 +24,7 @@ import urllib2
 import sys
 import traceback
 import time
+import logging
 #import random
 
 import gevent.monkey
@@ -33,8 +34,12 @@ TASK_COUNT=10
 evt = Event()
 msg_queue = Queue()
 url = "http://slowwly.robertomurray.co.uk/delay/3000/url/https://www.python.org/"
-# url = "https://www.python.org/"
+#url = "https://www.python.org/"
 #urls = ["https://www.python.org/", "https://www.oracle.com/"]
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+ 
 
 class DownloadedData(object):
     """
@@ -78,7 +83,7 @@ def download(task_id):
     try:
         response  = urllib2.urlopen(url)
     except Exception as e:
-        print "Exception raised:{} {}".format(e, traceback.format_exc())
+        logger.info( "Exception raised:{} {}".format(e, traceback.format_exc()))
         sys.exit(1)
 
     # response  = urllib2.urlopen(urls[random.randint(0,1)])
@@ -87,12 +92,12 @@ def download(task_id):
     downloaded_data.data = response.read() 
     downloaded_data.task_id =  task_id
     msg_queue.put(downloaded_data)
-    print 'Task completed : {}'.format(task_id)    
+    logger.info('Task completed : {}'.format(task_id))    
     if msg_queue.qsize() == TASK_COUNT:
-        print "-"*100
-        print("All Task completed, Waking up displayer")
+        logger.info( "-"*100)
+        logger.info("All Task completed, Waking up displayer")
         evt.set()
-        print "-"*100
+        logger.info( "-"*100)
     
 
 def asynchronous():
@@ -129,24 +134,25 @@ def displayer():
       - waiting for the download to complete
       - determining the downloaded data 
     """
-    print("Waiting for the download to complete(calculating pi)...")
+    logger.info("Waiting for the download to complete(calculating pi)...")
     result = []
     value_of_pi = calculate_pi()  
     evt.wait()
     while not msg_queue.empty():
         data_from_queue = msg_queue.get()
-        print("Task :{}, Bytes Downloaded: {}".format(data_from_queue.task_id, data_from_queue.size))
+        logger.info("Task :{}, Bytes Downloaded: {}".format(data_from_queue.task_id, 
+                                                            data_from_queue.size))
         result.append(data_from_queue)
 
-    print "-"*100
-    print("The value of PI is :{}".format(value_of_pi))
-    print "-"*100
+    logger.info( "-"*100)
+    logger.info("The value of PI is :{}".format(value_of_pi))
+    logger.info( "-"*100)
     
     is_all_equal =  all (item==result[0] for item in result) 
     if is_all_equal:
-        print "Data is the *Same* for each download"
+        logger.info("Data is the *Same* for each download")
     else:
-        print "Data is *NOT* the same for each download"
+        logger.info("Data is *NOT* the same for each download")
 
         from collections import defaultdict
         d = defaultdict(list)
@@ -154,18 +160,18 @@ def displayer():
             d[item.size].append(item)
 
         for key in d.keys():
-            print '-'*100
-            print 'Downloaded Size:{}b'.format(key)
-            print 'Tasks:{}'.format(','.join(str(item.task_id) for item in d[key]))
-            print '-'*100
+            logger.info('-'*100)
+            logger.info('Downloaded Size:{}b'.format(key))
+            logger.info('Tasks:{}'.format(','.join(str(item.task_id) for item in d[key])))
+            logger.info('-'*100)
 
 if __name__ == '__main__':
     try:
         start_time = time.time()
         asynchronous()
     except Exception as e:
-        print "Exception raised:{}".format(traceback.format_exc())
+        logger.info( "Exception raised:{}".format(traceback.format_exc()))
         sys.exit(1)
     time_taken = time.time() - start_time
-    print "Total time taken:{}s".format(time_taken)
+    logger.info( "Total time taken:{}s".format(time_taken))
 
